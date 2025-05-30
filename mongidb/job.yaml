@@ -3,6 +3,7 @@ kind: Job
 metadata:
   name: mongodb-init
 spec:
+  backoffLimit: 1
   template:
     spec:
       restartPolicy: Never
@@ -12,16 +13,32 @@ spec:
           command: ["sh", "-c"]
           args:
             - |
+              echo "Checking MongoDB readiness..."
+              RETRIES=0
+              MAX_RETRIES=30
               until mongosh --host mongodb-0.mongodb:27017 --eval "print('MongoDB is up')" >/dev/null 2>&1; do
+                echo "MongoDB not ready yet. Retrying in 10 seconds..."
                 sleep 10
+                RETRIES=$((RETRIES + 1))
+                if [ "$RETRIES" -ge "$MAX_RETRIES" ]; then
+                  echo "Gave up waiting for MongoDB after $MAX_RETRIES attempts"
+                  exit 1
+                fi
               done
+
+              echo "MongoDB is up. Initiating replica set..."
               mongosh --host mongodb-0.mongodb.default.svc.cluster.local --eval '
-              rs.initiate({
-                _id: "rs0",
-                members: [
-                  { _id: 0, host: "mongodb-0.mongodb:27017", priority: 2 },
-                  { _id: 1, host: "mongodb-1.mongodb:27017", priority: 1 },
-                  { _id: 2, host: "mongodb-2.mongodb:27017", priority: 1 }
-                ]
-              })'
-#
+              try {
+                rs.initiate({
+                  _id: "rs0",
+                  members: [
+                    { _id: 0, host: "mongodb-0.mongodb:27017", priority: 2 },
+                    { _id: 1, host: "mongodb-1.mongodb:27017", priority: 1 },
+                    { _id: 2, host: "mongodb-2.mongodb:27017", priority: 1 }
+                  ]
+                });
+              } catch (e) {
+                print("Replica set may already be initialized: " + e);
+              }'
+
+              echo "Replica set init script finished."
