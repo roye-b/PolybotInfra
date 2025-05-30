@@ -1,46 +1,36 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: mongo
-  namespace: default
+  name: mongodb
 spec:
-  serviceName: mongo-service
+  serviceName: "mongodb"
   replicas: 3
   selector:
     matchLabels:
-      app: mongo
+      app: mongodb
   template:
     metadata:
       labels:
-        app: mongo
+        app: mongodb
     spec:
       containers:
-        - name: mongo
-          image: mongo:latest
-          ports:
-            - containerPort: 27017
-          env:
-            - name: MONGO_INITDB_ROOT_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: mongo-secret
-                  key: mongo-root-username
-            - name: MONGO_INITDB_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mongo-secret
-                  key: mongo-root-password
-          volumeMounts:
-            - name: mongo-data
-              mountPath: /data/db
+      - name: mongodb
+        image: mongo:latest
+        command:
+          - mongod
+          - "--replSet"
+          - rs0
+          - "--bind_ip_all"
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-persistent-storage
+          mountPath: /data/db
   volumeClaimTemplates:
-    - metadata:
-        name: mongo-data
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
-        storageClassName: mongodb-storage  # Matches your cluster
-
+  - metadata:
+      name: mongo-persistent-storage
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 5Gi
