@@ -1,0 +1,40 @@
+name: Polybot Infrastructure Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      service_name:
+        description: "Target service to deploy"
+        required: true
+        type: string
+      image:
+        description: "New Docker image version"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  UpdateServiceDeploymentYaml:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Update deployment.yaml
+        run: |
+          echo "received : ${{ github.event.inputs.service_name }}, ${{ github.event.inputs.image }}"
+          echo "Updating k8s/${{ github.event.inputs.service_name }}'s deployment.yaml"
+          cd k8s/${{ github.event.inputs.service_name }}
+          yq e ".spec.template.spec.containers[0].image = \"${{ github.event.inputs.image }}\"" -i deployment.yaml
+
+      - name: Commit and push changes
+        run: |
+          cd k8s/${{ github.event.inputs.service_name }}
+          
+          git config --local user.email "github@actions"
+          git config --local user.name "github-actions"
+
+          git add deployment.yaml && git commit -m "Update ${{ github.event.inputs.service_name }} image to ${{ github.event.inputs.image }}"
+          git push origin main --force
