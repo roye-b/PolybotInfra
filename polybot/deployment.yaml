@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: polybot
-          image: royeb/polybot:v1.1.14
+          image: royeb/polybot:v1.1.17
           ports:
             - containerPort: 8443
           env:
@@ -31,6 +31,3 @@ spec:
               value: "8134126918:AAGahsP2LQ7T_ZNv8Zb8vLzKPVPXBJIqBl4"
             - name: POLYBOT_RESULTS_URL
               value: "8134126918:AAGahsP2LQ7T_ZNv8Zb8vLzKPVPXBJIqBl4"
-
-
-              
