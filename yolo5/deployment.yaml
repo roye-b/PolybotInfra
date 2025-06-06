@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: yolo5
-          image: royeb/yolo5:v1.1.12
+          image: royeb/yolo5:v1.1.13
           imagePullPolicy: Always
           env:
             - name: S3_BUCKET_NAME
