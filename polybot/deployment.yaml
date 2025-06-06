@@ -27,3 +27,6 @@ spec:
               value: "royeb-k8s"
             - name: SQS_URL
               value: "https://sqs.eu-north-1.amazonaws.com/352708296901/royeb-sqs"
+            - name: TELEGRAM_TOKEN
+              value: "8134126918:AAGahsP2LQ7T_ZNv8Zb8vLzKPVPXBJIqBl4"
+              
