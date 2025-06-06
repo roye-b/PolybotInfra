@@ -25,16 +25,16 @@ jobs:
       - name: Update deployment.yaml
         run: |
           echo "received : ${{ github.event.inputs.service_name }}, ${{ github.event.inputs.image }}"
-          echo "Updating k8s/${{ github.event.inputs.service_name }}'s deployment.yaml"
-          cd k8s/${{ github.event.inputs.service_name }}
+          echo "Updating ${{ github.event.inputs.service_name }}'s deployment.yaml"
+          cd ${{ github.event.inputs.service_name }}
           yq e ".spec.template.spec.containers[0].image = \"${{ github.event.inputs.image }}\"" -i deployment.yaml
 
       - name: Commit and push changes
         run: |
-          cd k8s/${{ github.event.inputs.service_name }}
+          cd ${{ github.event.inputs.service_name }}
           
           git config --local user.email "github@actions"
           git config --local user.name "github-actions"
 
           git add deployment.yaml && git commit -m "Update ${{ github.event.inputs.service_name }} image to ${{ github.event.inputs.image }}"
-          git push origin main --force
+          git push origin master --force
