@@ -23,10 +23,14 @@ spec:
           env:
             - name: TELEGRAM_APP_URL
               value: "https://0c2c-5-29-23-65.ngrok-free.app"
-            - name: S3_BUCKET_NAME
+            - name: BUCKET_NAME
               value: "royeb-k8s"
             - name: SQS_URL
               value: "https://sqs.eu-north-1.amazonaws.com/352708296901/royeb-sqs"
             - name: TELEGRAM_TOKEN
               value: "8134126918:AAGahsP2LQ7T_ZNv8Zb8vLzKPVPXBJIqBl4"
+            - name: POLYBOT_RESULTS_URL
+              value: "8134126918:AAGahsP2LQ7T_ZNv8Zb8vLzKPVPXBJIqBl4"
+
+
               
