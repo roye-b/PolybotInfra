@@ -4,7 +4,11 @@ metadata:
   name: polybot-ingress
   namespace: default
 spec:
-  ingressClassName: nginx   # ✅ זה השדה החדש והנכון
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - royeb.devops-int-college.com
+    secretName: polybot-tls
   rules:
   - host: royeb.devops-int-college.com
     http:
@@ -16,4 +20,3 @@ spec:
             name: polybot-service
             port:
               number: 8443
-              #
