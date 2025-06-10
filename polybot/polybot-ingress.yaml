@@ -9,7 +9,7 @@ spec:
   - host: royeb.devops-int-college.com
     http:
       paths:
-      - path: /bot
+      - path: /
         pathType: Prefix
         backend:
           service:
